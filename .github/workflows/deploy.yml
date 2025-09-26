@@ -18,6 +18,9 @@ jobs:
         distribution: 'temurin'
         cache: maven
 
+    - name: Build da imagem
+      run: docker build -t vollmed-api_api:latest .
+
     - name: Roda Docker Compose
       run: docker compose up -d
 
@@ -30,13 +33,12 @@ jobs:
       run: | 
          echo "$EC2_PRIVATE_KEY" > deploy_key.pem
          chmod 600 deploy_key.pem
-            
-         docker save -o vollmed-api.tar vollmed-api_api
+         docker save -o vollmed-api.tar vollmed-api_api:latest
          scp -o StrictHostKeyChecking=no -i deploy_key.pem vollmed-api.tar $USER@$HOST:/home/ubuntu/
          scp -o StrictHostKeyChecking=no -i deploy_key.pem init.sql $USER@$HOST:/home/ubuntu/
          scp -o StrictHostKeyChecking=no -i deploy_key.pem docker-compose-prod.yaml $USER@$HOST:/home/ubuntu/
-         scp -o StrictHostKeyChecking=no -i deploy_key.pemm script-deploy.sh $USER@$HOST:/home/ubuntu/
+         scp -o StrictHostKeyChecking=no -i deploy_key.pem script-deploy.sh $USER@$HOST:/home/ubuntu/
          
          ssh -i deploy_key.pem $USER@$HOST "chmod +x script-deploy.sh && ./script-deploy.sh"
-         
+
          
