@@ -1,7 +1,7 @@
 #! /bin/bash
 
 docker load -i vollmed-api.tar
-mv docker-compose-pro.yaml docker-compose.yaml
+mv docker-compose-prod.yaml docker-compose.yaml
 
 container_ids=$(docker ps -q)
 
